@@ -135,7 +135,7 @@ def plot_SFC_slowdata_and_fluxes(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, s
     ax[2].scatter(wd1[wd1.between(90, 180)].index, wd1[wd1.between(90, 180)],
                   label='WD1 (90-180)', s=10, color='deepskyblue',  marker='o', facecolors='none')
     ax[2].scatter(wd1[~wd1.between(0, 180)].index, wd1[~wd1.between(0, 180)],
-                  label='WD1 (180-360)', s=10, color='deepskyblue', marker='x')
+                   s=10, color='deepskyblue', marker='x')
 
     # WD2 markers
     ax[2].scatter(wd2[wd2.between(0, 90)].index, wd2[wd2.between(0, 90)],
@@ -143,7 +143,7 @@ def plot_SFC_slowdata_and_fluxes(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, s
     ax[2].scatter(wd2[wd2.between(90, 180)].index, wd2[wd2.between(90, 180)],
                   label='WD2 (90-180)', s=10, color='darkblue', marker='o', facecolors='none')
     ax[2].scatter(wd2[~wd2.between(0, 180)].index, wd2[~wd2.between(0, 180)],
-                  label='WD2 (180-360)', s=10, color='darkblue', marker='x')
+                   s=10, color='darkblue', marker='x')
 
     # Add a secondary y-axis (twinx) on the right
     ax2_right = ax[2].twinx()
@@ -209,7 +209,7 @@ def plot_SFC_slowdata_and_fluxes(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, s
 
 
     fig.suptitle(f'{resample_time} resampled {start} - {end}', y=0.92, fontsize=16)
-    plt.savefig(f'./plots_specific_events/{sensor}_{start}_slowdata_and_fluxes.png', bbox_inches='tight')
+    # plt.savefig(f'./plots_specific_events/{sensor}_{start}_slowdata_and_fluxes.png', bbox_inches='tight')
     return fig, ax
 
 def check_log_profile(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, start, end, heights=[0,1.5,1.9,3.5,16,26], log=False):
@@ -218,7 +218,7 @@ def check_log_profile(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, start, end, 
     """
     fig, axes = plt.subplots(1, 5, figsize=(15, 6), sharey=True)
     time_diff=pd.Timestamp(end) - pd.Timestamp(start)
-    # Wind Speed Profile
+    #Wind Speed Profile
     wind_speeds = [0, resample_with_threshold(slowdata['WS2_Avg'][start:end], time_diff, True).mean(), 
                    resample_with_threshold(fluxes_SFC['wind_speed'][start:end], time_diff, True).mean(),
                    resample_with_threshold(slowdata['WS1_Avg'][start:end], time_diff, True).mean(), 
@@ -237,6 +237,7 @@ def check_log_profile(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, start, end, 
     axes[0].set_ylabel('Height (m)')
     # axes[0].legend()
     axes[0].set_title('Wind Speed Profile')
+    axes[0].set_xlim(0, 25)
 
     # Temperature Profile
     temperatures = [
@@ -250,17 +251,19 @@ def check_log_profile(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, start, end, 
     axes[1].set_xlabel('Temperature (°C)')
     # axes[1].legend()
     axes[1].set_title('Temperature Profile')
+    axes[1].set_xlim(-30, 0)
 
     # Sensible Heat Flux Profile
     sensible_heat_fluxes = [
-        resample_with_threshold(fluxes_SFC['H'][start:end], time_diff, True).mean(),
-        resample_with_threshold(fluxes_16m['H'][start:end], time_diff, True).mean(),
-        resample_with_threshold(fluxes_26m['H'][start:end], time_diff, True).mean()
+        resample_with_threshold(fluxes_SFC['H'][start:end], time_diff, True, '1h', 60).mean(),
+        resample_with_threshold(fluxes_16m['H'][start:end], time_diff, True, '1h', 60).mean(),
+        resample_with_threshold(fluxes_26m['H'][start:end], time_diff, True, '1h', 60).mean()
     ]
     axes[2].scatter(sensible_heat_fluxes, [heights[2]] + heights[4:], label='Sensible Heat Flux Data Points')
     axes[2].set_xlabel('Sensible Heat Flux (W/m²)')
     # axes[2].legend()
     axes[2].set_title('Sensible Heat Flux Profile')
+    axes[2].set_xlim(-100, 50)
 
     # TKE Profile
     tke_fluxes = [
@@ -272,6 +275,7 @@ def check_log_profile(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, start, end, 
     axes[3].set_xlabel('TKE')
     # axes[3].legend()
     axes[3].set_title('TKE Profile')
+    axes[3].set_xlim(0, 1)
 
     # TKE Profile
     tke_fluxes = [
@@ -283,12 +287,12 @@ def check_log_profile(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m, start, end, 
     axes[4].set_xlabel('stability')
     # axes[4].legend()
     axes[4].set_title('stability Profile')
+    axes[4].set_xlim(-0.4, 2)
 
     plt.suptitle(f'Wind, Temperature, and Sensible Heat Flux Profiles from {start} to {end}', fontsize=16, y=0.97)
     plt.tight_layout()
-    # plt.savefig(f'./plots/log_profile_{start}_to_{end}.png', bbox_inches='tight')
-    # plt.show()
-
+    # plt.savefig(save_path+f'log_profile_{start}_to_{end}.png', bbox_inches='tight')
+    plt.show()
 def check_log_profiles(slowdata, fluxes_SFC, fluxes_16m, fluxes_26m,consecutive_days, heights=[0,2,3,16,26], log=False):
     """
     Check the log profile for the slow data and fluxes.

@@ -109,6 +109,7 @@ def read_data(folder_path, fastorslow, sensor, start=None, end=None, plot_data=F
     if plot_data:
         plot_slow_data(combined_data, sensor)
     
+
     return combined_data
 
 
@@ -216,7 +217,7 @@ def plot_slow_data(slowdata, sensor):
 
 
     fig.suptitle(f'{sensor} slowdata')
-    plt.savefig(f'./plots/{sensor}_slowdata.png')
+    # plt.savefig(f'./plots/{sensor}_slowdata.png')
         
     return fig, ax
 
@@ -284,7 +285,7 @@ def plot_SFC_slowdata(slowdata, sensor, start, end):
     ax[6].set_ylabel('Flowcapt [g/m2/s]')
     fig.suptitle(f'{sensor} slowdata {start} - {end}', y=0.92, fontsize=16)
     # plt.tight_layout()
-    plt.savefig(f'./plots/{sensor}_{start}_slowdata.png', bbox_inches='tight')
+    # plt.savefig(f'./plots/{sensor}_{start}_slowdata.png', bbox_inches='tight')
         
     return fig, ax
 
